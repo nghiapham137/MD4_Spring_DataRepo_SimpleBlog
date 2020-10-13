@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Blog</title>
+</head>
+<body>
+<h1>Delete blog</h1>
+<p>Do you want to delete blog: <span th:text="${blog.title}"></span></p>
+<form th:action="@{'/blogs/delete/' + ${blog.id}}" method="post">
+    <input type="submit" value="Delete">
+</form>
+
+</body>
+</html>
