@@ -3,11 +3,19 @@ package controller;
 import model.Blog;
 import model.Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import service.BlogService;
 import service.CategoryService;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/blogs")
@@ -24,8 +32,15 @@ public class BlogController {
     }
 
     @GetMapping("")
-    public String listBlog(Model model) {
-        Iterable<Blog> blogs = blogService.findAll();
+    public String listBlog(Model model, @RequestParam("s")Optional<String> s) {
+        Page<Blog> blogs;
+        Sort sort = new Sort(new Sort.Order(Direction.ASC, "title") );
+        Pageable pageable = new PageRequest(0,10 , sort);
+        if (s.isPresent()) {
+            blogs = blogService.findAllByTitleContaining(s.get(), pageable);
+        }else {
+            blogs = blogService.findAll(pageable);
+        }
         model.addAttribute("blogs", blogs);
         return "blog/list";
     }
@@ -57,9 +72,9 @@ public class BlogController {
     }
 
     @PostMapping("/edit")
-    public String updateBlog(Blog blog, Model model) {
+    public String updateBlog(Blog blog, Model model, Pageable pageable) {
         blogService.save(blog);
-        Iterable<Blog> blogs = blogService.findAll();
+        Page<Blog> blogs = blogService.findAll(pageable);
         model.addAttribute("blogs", blogs);
         return "redirect:/blogs";
     }

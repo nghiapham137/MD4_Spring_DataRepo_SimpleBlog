@@ -7,6 +7,11 @@
 <body>
     <h1>List Blog</h1>
     <a href="/blogs/create">Create blog</a>
+    <form>
+        Search by title:
+        <input type="text" name="s">
+        <input type="submit" value="Search">
+    </form>
     <table border="1">
         <tr>
             <td>STT</td>
@@ -26,6 +31,11 @@
             <td><a th:href="@{'/blogs/delete/' + ${blog.id}}">Delete</a> </td>
         </tr>
     </table>
+    <div>
+        <a th:href="@{'/blogs'(page=${blogs.number - 1})}" th:if="${blogs.hasPrevious()}">Previous</a>
+        <span th:text="${blogs.number + 1}"></span>/<span th:text="${blogs.totalPages}"></span>
+        <a th:href="@{'/blogs'(page=${blogs.number + 1})}" th:if="${blogs.hasNext()}">Next</a>
+    </div>
     <a href="/categories">Category list</a>
 
 </body>
