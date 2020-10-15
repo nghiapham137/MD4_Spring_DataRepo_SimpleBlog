@@ -12,8 +12,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import service.BlogService;
 import service.CategoryService;
+import service.exception.NotFoundException;
 
 import java.util.Optional;
 
@@ -58,14 +60,14 @@ public class BlogController {
     }
 
     @GetMapping("/view/{id}")
-    public String viewBlog(@PathVariable("id") Long id,Model model) {
-        Blog blog = blogService.findById(id);
+    public String viewBlog(@PathVariable("id") Long id,Model model) throws NotFoundException {
+        Blog blog = blogService.findById(id) ;
         model.addAttribute("blog", blog);
         return "blog/view";
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable("id") Long id,Model model) {
+    public String showEditForm(@PathVariable("id") Long id,Model model) throws NotFoundException {
         Blog blog = blogService.findById(id);
         model.addAttribute("blog", blog);
         return "blog/edit";
@@ -80,7 +82,7 @@ public class BlogController {
     }
 
     @GetMapping("/delete/{id}")
-    public String showDeleteForm(@PathVariable("id") Long id,Model model) {
+    public String showDeleteForm(@PathVariable("id") Long id,Model model) throws NotFoundException {
         Blog blog = blogService.findById(id);
         model.addAttribute("blog", blog);
         return "blog/delete";
@@ -92,5 +94,8 @@ public class BlogController {
         return "redirect:/blogs";
     }
 
-
+    @ExceptionHandler(NotFoundException.class)
+    public ModelAndView showNotFound() {
+        return new ModelAndView("blog/not-found");
+    }
 }

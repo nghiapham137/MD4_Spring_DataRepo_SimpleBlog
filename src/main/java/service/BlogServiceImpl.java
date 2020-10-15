@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import repository.BlogRepository;
+import service.exception.NotFoundException;
 
 import java.util.List;
 
@@ -20,8 +21,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Blog findById(Long id) {
-        return blogRepository.findOne(id);
+    public Blog findById(Long id) throws NotFoundException {
+        Blog blog =  blogRepository.findOne(id);
+        if (blog != null) {
+            return blog;
+        }else throw new NotFoundException();
     }
 
     @Override
