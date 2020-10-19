@@ -4,6 +4,7 @@ import model.Blog;
 import model.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -107,5 +108,16 @@ public class CategoryController {
 //        modelAndView.addObject("blogs", blogs);
 //        return modelAndView;
 //    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Category> getCategoryById(@PathVariable("id") Long id) {
+        Category category = categoryService.findById(id);
+        if (category == null) {
+            return new ResponseEntity<Category>(HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity<Category>(category, HttpStatus.OK);
+        }
+    }
+
 
 }

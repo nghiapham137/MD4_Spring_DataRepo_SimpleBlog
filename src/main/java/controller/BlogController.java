@@ -10,11 +10,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriComponentsBuilder;
 import service.BlogService;
 import service.CategoryService;
 import service.exception.NotFoundException;
@@ -59,6 +61,58 @@ public class BlogController {
         }
 
     }
+
+    @GetMapping(value = "/view/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Blog> getBlogById(@PathVariable("id") Long id) throws NotFoundException {
+        Blog blog = blogService.findById(id);
+        if (blog == null) {
+            System.out.println("Blog with id " + id + " not found");
+            return new ResponseEntity<Blog>(HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity<Blog>(blog, HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Blog> createBlog(@RequestBody Blog blog, UriComponentsBuilder urBuilder) {
+        blogService.save(blog);
+        return new ResponseEntity<Blog>(HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<Blog> updateCustomer(@PathVariable("id") Long id, @RequestBody Blog blog) throws NotFoundException {
+        System.out.println("Updating Blog " + id);
+
+        Blog currentBlog = blogService.findById(id);
+
+        if (currentBlog == null) {
+            System.out.println("Blog with id " + id + " not found");
+            return new ResponseEntity<Blog>(HttpStatus.NOT_FOUND);
+        }
+
+        currentBlog.setTitle(blog.getTitle());
+        currentBlog.setContent(blog.getContent());
+        currentBlog.setCategory(blog.getCategory());
+        currentBlog.setId(blog.getId());
+
+        blogService.save(currentBlog);
+        return new ResponseEntity<Blog>(currentBlog, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Blog> deleteCustomer(@PathVariable("id") Long id) throws NotFoundException {
+        System.out.println("Fetching & Deleting Blog with id " + id);
+
+        Blog blog = blogService.findById(id);
+        if (blog == null) {
+            System.out.println("Unable to delete. Customer with id " + id + " not found");
+            return new ResponseEntity<Blog>(HttpStatus.NOT_FOUND);
+        }
+
+        blogService.remove(id);
+        return new ResponseEntity<Blog>(HttpStatus.NO_CONTENT);
+    }
+
 
 //    @GetMapping("/create")
 //    public String showAddForm(Model model) {
