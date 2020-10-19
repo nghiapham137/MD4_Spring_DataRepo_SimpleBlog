@@ -10,7 +10,7 @@ import service.exception.NotFoundException;
 import java.util.List;
 
 public interface BlogService {
-    Page<Blog> findAll(Pageable pageable);
+    Iterable<Blog> findAll();
     Blog findById(Long id) throws NotFoundException;
     void save(Blog blog);
     void remove(Long id);

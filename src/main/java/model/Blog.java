@@ -1,10 +1,13 @@
 package model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
 @Table
+
 public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -12,7 +15,8 @@ public class Blog {
     private String title;
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = {"blogs"})
     @JoinColumn(name = "category_id")
     private Category category;
 

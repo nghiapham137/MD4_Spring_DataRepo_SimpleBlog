@@ -16,8 +16,8 @@ public class BlogServiceImpl implements BlogService {
     private BlogRepository blogRepository;
 
     @Override
-    public Page<Blog> findAll(Pageable pageable) {
-        return blogRepository.findAll(pageable);
+    public Iterable<Blog> findAll() {
+        return blogRepository.findAll();
     }
 
     @Override
