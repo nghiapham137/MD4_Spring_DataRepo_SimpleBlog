@@ -38,28 +38,15 @@ public class BlogController {
         return categoryService.findAll();
     }
 
-//    @GetMapping("")
-//    public String listBlog(Model model, @RequestParam("s")Optional<String> s) {
-//        Page<Blog> blogs;
-//        Sort sort = new Sort(new Sort.Order(Direction.ASC, "title") );
-//        Pageable pageable = new PageRequest(0,10 , sort);
-//        if (s.isPresent()) {
-//            blogs = blogService.findAllByTitleContaining(s.get(), pageable);
-//        }else {
-//            blogs = blogService.findAll(pageable);
-//        }
-//        model.addAttribute("blogs", blogs);
-//        return "blog/list";
-//    }
-    @GetMapping("")
-    public ResponseEntity<Iterable<Blog>> listBlog() {
-        List<Blog> blogs = (List<Blog>) blogService.findAll();
-        if (blogs.isEmpty()) {
-            return new ResponseEntity<Iterable<Blog>>(HttpStatus.NO_CONTENT);
-        }else {
-            return new ResponseEntity<Iterable<Blog>>(blogs, HttpStatus.OK);
-        }
+    @GetMapping("/list")
+    public ModelAndView blogList() {
+        ModelAndView modelAndView = new ModelAndView("/blog/list");
+        return modelAndView;
+    }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<Iterable<Blog>> getAll() {
+        return new ResponseEntity<>(blogService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/view/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,7 +61,7 @@ public class BlogController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Blog> createBlog(@RequestBody Blog blog, UriComponentsBuilder urBuilder) {
+    public ResponseEntity<Blog> createBlog(@RequestBody Blog blog) {
         blogService.save(blog);
         return new ResponseEntity<Blog>(HttpStatus.CREATED);
     }

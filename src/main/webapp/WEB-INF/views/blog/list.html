@@ -3,40 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>List Blog</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 </head>
 <body>
-    <h1>List Blog</h1>
-    <a href="/blogs/create">Create blog</a>
-    <form>
-        Search by title:
-        <input type="text" name="s">
-        <input type="submit" value="Search">
-    </form>
-    <table border="1">
-        <tr>
-            <td>STT</td>
-            <td>Title</td>
-            <td>Category</td>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-
-        <tr th:each="blog, varloop :${blogs}">
-            <td th:text="${varloop.index+1}"></td>
-            <td th:text="${blog.title}"></td>
-            <td th:text="${blog.category.name}"></td>
-            <td><a th:href="@{'/blogs/view/' + ${blog.id}}">View</a></td>
-            <td><a th:href="@{'/blogs/edit/' + ${blog.id}}">Edit</a> </td>
-            <td><a th:href="@{'/blogs/delete/' + ${blog.id}}">Delete</a> </td>
-        </tr>
-    </table>
-    <div>
-        <a th:href="@{'/blogs'(page=${blogs.number - 1})}" th:if="${blogs.hasPrevious()}">Previous</a>
-        <span th:text="${blogs.number + 1}"></span>/<span th:text="${blogs.totalPages}"></span>
-        <a th:href="@{'/blogs'(page=${blogs.number + 1})}" th:if="${blogs.hasNext()}">Next</a>
-    </div>
-    <a href="/categories">Category list</a>
-
+<table id="blogList" border="1">
+</table>
 </body>
 </html>
+<script type="text/javascript">
+    function getBlog(blog) {
+        return `<tr>
+                <td>${blog.title}</td> +
+                <td>${blog.category.name}</td> +
+                <td><a class="viewBlog" href="${blog.id}">View</a> </td>
+                <td><a class="editBlog" href="${blog.id}">Edit</a></td> +
+                <td><a class="deleteBlog" href="${blog.id}">Delete</a> </td>
+            </tr>`;
+    }
+
+    function showAllBlogs() {
+        $.ajax({
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            type: "GET",
+            url: "/blogs/getAll",
+            success: function (list) {
+                debugger
+                let content = '<tr>' +
+                    '<td>Title</td>' +
+                    '<td>Category</td>' +
+                    '<td></td>' +
+                    '<td></td>' +
+                    '<td></td>' +
+                    '</tr>';
+                for (let i = 0; i < list.length; i++) {
+                    content += getBlog(list[i]);
+                }
+                $("#blogList").html(content);
+            },
+            error: function () {
+                alert("loi roi");
+            }
+        });
+    }
+    showAllBlogs();
+</script>
